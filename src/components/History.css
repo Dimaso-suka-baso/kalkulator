@@ -1,6 +1,6 @@
 /* === Kontainer Riwayat === */
 .history-container {
-  background: #2b2f36;               /* Selaras dengan kalkulator */
+  background: #2b2f36;               
   color: #DFD0B8;
   padding: 15px;
   border-radius: 12px;
@@ -60,7 +60,7 @@
 .no-history-msg {
   font-size: 0.85rem;
   font-style: italic;
-  color: #ffa657;
+  color: #ff5757;
   margin-bottom: 8px;
   transition: opacity 0.3s ease;
 }
