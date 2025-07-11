@@ -13,6 +13,7 @@
     "@clerk/clerk-react": "^5.32.4",
     "bootstrap": "^5.3.7",
     "lucide-react": "^0.525.0",
+    "mathjs": "^14.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-sketch-canvas": "^6.2.0"

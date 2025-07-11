@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
+import { evaluate } from 'mathjs';
 
 import Display from './components/Display';
 import Button from './components/Button';
@@ -9,18 +10,17 @@ import ConfirmModal from './components/ConfirmModal';
 import './App.css';
 
 const App = () => {
-  // ==========================
-  // 🔢 STATE UTAMA
-  // ==========================
+  const historyRef = useRef([]);
   const [input, setInput] = useState('');
   const [result, setResult] = useState('');
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem('calc-history');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [isResult, setIsResult] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  // ==========================
-  // 🔘 BUTTON GRID
-  // ==========================
   const buttons = [
     'AC', 'DEL', '+/-', '/',
     '^', '+', '-', '*',
@@ -30,17 +30,10 @@ const App = () => {
     '0', '00', '='
   ];
 
-  // ==========================
-  // 🔣 FORMAT ANGKA
-  // ==========================
+  // Format angka ke format lokal (Indonesia)
   const formatNumber = (num) => {
     const number = parseFloat(num);
     if (isNaN(number)) return num;
-
-    // Gunakan notasi e untuk angka ekstrem
-    if (Math.abs(number) >= 1e9 || (Math.abs(number) > 0 && Math.abs(number) < 1e-6)) {
-      return number.toExponential(5);
-    }
 
     return number.toLocaleString('id-ID', {
       minimumFractionDigits: 0,
@@ -48,37 +41,30 @@ const App = () => {
     });
   };
 
-  const unformatNumber = (str) => str.replace(/\./g, '').replace(',', '.');
+  // Hilangkan format lokal agar bisa diproses mathjs
+  const unformatNumber = (str) =>
+    str.replace(/\./g, '').replace(',', '.');
 
+  // Format ulang ekspresi agar mudah dibaca pengguna
   const formatExpression = (raw) => {
     return raw
       .split(/([+\-*/^√])/g)
       .map((part) => {
-        const num = unformatNumber(part);
-        return isNaN(num) || part.trim() === '' || /^[+\-*/^√]$/.test(part)
-          ? part
-          : formatNumber(num);
+        if (/^[\d,.]+$/.test(part)) {
+          const num = parseFloat(part.replace(',', '.'));
+          return isNaN(num) ? part : formatNumber(num);
+        }
+        return part;
       })
       .join('');
   };
 
-  // ==========================
-  // 💾 LOAD / SAVE HISTORY
-  // ==========================
-  useEffect(() => {
-    const savedHistory = localStorage.getItem('calc-history');
-    if (savedHistory) {
-      setHistory(JSON.parse(savedHistory));
-    }
-  }, []);
-
+  // Simpan history ke localStorage setiap kali history berubah
   useEffect(() => {
     localStorage.setItem('calc-history', JSON.stringify(history));
   }, [history]);
 
-  // ==========================
-  // ⌨️ KEYBOARD SUPPORT
-  // ==========================
+  // Tangani input dari keyboard
   useEffect(() => {
     const handleKeyDown = (event) => {
       const key = event.key;
@@ -100,13 +86,11 @@ const App = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [input]);
 
-  // ==========================
-  // 🧠 EVALUASI EKSPRESI
-  // ==========================
+  // Evaluasi ekspresi matematika
   const evaluateExpression = () => {
     const raw = unformatNumber(input)
       .replace(/\^/g, '**')
-      .replace(/√(\d+(\.\d+)?)/g, 'Math.sqrt($1)');
+      .replace(/√(\d+(\.\d+)?)/g, 'sqrt($1)');
 
     const isValid = /^[√\d.,+\-*/^%]+$/.test(input);
     if (!isValid) {
@@ -115,27 +99,31 @@ const App = () => {
     }
 
     try {
-      let hasil = eval(raw);
-      hasil = Math.round((hasil + Number.EPSILON) * 1e9) / 1e9;
-      const formatted = formatNumber(hasil);
+      const hasil = evaluate(raw);
+      const rounded = Math.round((hasil + Number.EPSILON) * 1e9) / 1e9;
+      const formatted = formatNumber(rounded);
+
       setResult(formatted);
       setIsResult(true);
-      setHistory((prev) => [
-        ...prev,
-        {
-          expression: formatExpression(input),
+
+      setHistory((prev) => {
+        const updated = [...prev, {
+          expression: input,
           result: formatted
-        }
-      ]);
-    } catch {
+        }];
+        localStorage.setItem('calc-history', JSON.stringify(updated));
+        historyRef.current = updated;
+        return updated;
+      });
+
+    } catch (err) {
+      console.error('Evaluation error:', err);
       setResult('Error');
       setInput('');
     }
   };
 
-  // ==========================
-  // 📱 HANDLER TOMBOL
-  // ==========================
+  // Tangani semua tombol kalkulator
   const handleClick = (value) => {
     if (value === 'AC') {
       setInput('');
@@ -173,14 +161,14 @@ const App = () => {
       if (isResult) {
         if (/[+\-*/^]/.test(value)) {
           const rawResult = result.replace(/\./g, '').replace(',', '.');
-          setInput(rawResult + value);
+          const formatted = rawResult.replace('.', ',');
+          setInput(formatted + value);
         } else {
           setInput(value);
         }
         setResult('');
         setIsResult(false);
       } else {
-        // Blokir input operator pertama & ganda
         if (/[+\-*/^]/.test(value) && (input === '' || /[+\-*/^]$/.test(input))) {
           return;
         }
@@ -194,12 +182,12 @@ const App = () => {
     }
   };
 
-  // ==========================
-  // 🗑️ MODAL & HISTORY ACTION
-  // ==========================
+  // Fungsi riwayat
   const handleClearHistory = () => setShowModal(true);
   const confirmDelete = () => {
+    localStorage.removeItem('calc-history');
     setHistory([]);
+    historyRef.current = [];
     setShowModal(false);
   };
   const cancelDelete = () => setShowModal(false);
@@ -207,9 +195,6 @@ const App = () => {
     setHistory((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ==========================
-  // 🧩 RENDER UI
-  // ==========================
   return (
     <>
       <SignedOut>
