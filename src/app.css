@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-/* ======================================
-   🔧 RESET & BASE STYLES
-====================================== */
 body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
@@ -14,18 +11,12 @@ body {
   height: 100vh;
 }
 
-/* ======================================
-   🧩 APP CONTAINER
-====================================== */
 .app {
   width: 100%;
   max-width: 400px;
   padding: 20px;
 }
 
-/* ======================================
-   🧮 CALCULATOR BOX
-====================================== */
 .calculator {
   background: #393E46;
   border-radius: 20px;
@@ -34,9 +25,6 @@ body {
   padding: 20px;
 }
 
-/* ======================================
-   📺 DISPLAY AREA
-====================================== */
 .display-container {
   background: #DFD0B8;
   color: #222831;
@@ -64,18 +52,12 @@ body {
   animation: slideUpFade 0.3s ease;
 }
 
-/* ======================================
-   🔢 BUTTON GRID
-====================================== */
 .button-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 15px;
 }
 
-/* ======================================
-   🔘 GENERAL BUTTON STYLE
-====================================== */
 .calc-button {
   width: 60px;
   height: 60px;
@@ -99,9 +81,6 @@ body {
   background: #1f6feb;
 }
 
-/* ======================================
-   ✴️ BUTTON VARIANTS
-====================================== */
 .calc-button.operator {
   background-color: #948979;
   color: white;
@@ -127,9 +106,6 @@ body {
   border-radius: 12px;
 }
 
-/* ======================================
-   🎞️ ANIMATIONS
-====================================== */
 @keyframes popIn {
   0% {
     opacity: 0;
@@ -152,9 +128,6 @@ body {
   }
 }
 
-/* ======================================
-   🔐 LOGIN PAGE STYLING
-====================================== */
 .login-container {
   display: flex;
   justify-content: center;
@@ -210,9 +183,6 @@ body {
   background-color: #e0e0e0;
 }
 
-/* ======================================
-   📱 RESPONSIVE (MOBILE)
-====================================== */
 @media (max-width: 480px) {
   .login-card {
     padding: 30px 20px;
