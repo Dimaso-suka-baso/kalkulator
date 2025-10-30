@@ -1,4 +1,3 @@
-/* === Kontainer Riwayat === */
 .history-container {
   background: #2b2f36;               
   color: #DFD0B8;
@@ -11,7 +10,6 @@
   box-shadow: 0 0 10px rgba(0,0,0,0.25);
 }
 
-/* Scrollbar Styling */
 .history-container::-webkit-scrollbar {
   width: 8px;
 }
@@ -28,7 +26,6 @@
   background: #4b4f56;
 }
 
-/* Header */
 .history-header {
   display: flex;
   justify-content: space-between;
@@ -38,10 +35,9 @@
 .history-container h3 {
   margin: 0;
   font-size: 1.2rem;
-  color: #00b894; /* Warna aksen hijau (sama seperti tombol "=") */
+  color: #00b894; 
 }
 
-/* Tombol Hapus Semua */
 .clear-button {
   background-color: transparent;
   border: 1px solid #948979;
@@ -56,7 +52,6 @@
   background-color: #393E46;
 }
 
-/* Riwayat Kosong */
 .no-history-msg {
   font-size: 0.85rem;
   font-style: italic;
@@ -65,7 +60,6 @@
   transition: opacity 0.3s ease;
 }
 
-/* Daftar Riwayat */
 .history-container ul {
   list-style: none;
   padding: 0;
@@ -82,7 +76,6 @@
   background: #393E46;
 }
 
-/* Teks ekspresi & hasil */
 .history-entry {
   flex: 1;
   font-size: 0.85rem;
@@ -92,7 +85,6 @@
   text-overflow: ellipsis;
 }
 
-/* Tombol Hapus Per Item */
 .delete-item-button {
   background: transparent;
   border: none;
