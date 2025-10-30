@@ -30,7 +30,6 @@ const App = () => {
     '0', '00', '='
   ];
 
-  // Format angka ke format lokal (Indonesia)
   const formatNumber = (num) => {
     const number = parseFloat(num);
     if (isNaN(number)) return num;
@@ -41,11 +40,9 @@ const App = () => {
     });
   };
 
-  // Hilangkan format lokal agar bisa diproses mathjs
   const unformatNumber = (str) =>
     str.replace(/\./g, '').replace(',', '.');
 
-  // Format ulang ekspresi agar mudah dibaca pengguna
   const formatExpression = (raw) => {
     return raw
       .split(/([+\-*/^√])/g)
@@ -59,12 +56,10 @@ const App = () => {
       .join('');
   };
 
-  // Simpan history ke localStorage setiap kali history berubah
   useEffect(() => {
     localStorage.setItem('calc-history', JSON.stringify(history));
   }, [history]);
 
-  // Tangani input dari keyboard
   useEffect(() => {
     const handleKeyDown = (event) => {
       const key = event.key;
@@ -86,7 +81,6 @@ const App = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [input]);
 
-  // Evaluasi ekspresi matematika
   const evaluateExpression = () => {
     const raw = unformatNumber(input)
       .replace(/\^/g, '**')
@@ -123,7 +117,6 @@ const App = () => {
     }
   };
 
-  // Tangani semua tombol kalkulator
   const handleClick = (value) => {
     if (value === 'AC') {
       setInput('');
@@ -182,7 +175,6 @@ const App = () => {
     }
   };
 
-  // Fungsi riwayat
   const handleClearHistory = () => setShowModal(true);
   const confirmDelete = () => {
     localStorage.removeItem('calc-history');
