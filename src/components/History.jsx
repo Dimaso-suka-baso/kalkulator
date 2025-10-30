@@ -21,18 +21,14 @@ const History = ({ history, onSelect, onClear, onDeleteItem }) => {
           Hapus Semua
         </button>
       </div>
-
-      {/* Pesan jika tidak ada riwayat untuk dihapus */}
       {showNoHistoryMsg && (
         <p className="no-history-msg">Tidak ada riwayat untuk dihapus.</p>
       )}
 
-      {/* Tampilkan pesan jika belum ada riwayat */}
       {history.length === 0 && !showNoHistoryMsg && (
         <p className="empty">Belum ada riwayat.</p>
       )}
 
-      {/* Daftar riwayat */}
       <ul>
         {history.map((item, index) => (
           <li key={index}>
